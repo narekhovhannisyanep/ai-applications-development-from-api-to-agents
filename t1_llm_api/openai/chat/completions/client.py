@@ -82,7 +82,7 @@ class OpenAIClient(BaseOpenAIClient):
         """
         messages_dicts = [
             {"role": Role.SYSTEM, "content": self._system_prompt},
-            *[msg.to_dict for msg in messages],
+            *[msg.to_dict() for msg in messages],
         ]
 
         stream = await self._async_client.chat.completions.create(
@@ -92,10 +92,10 @@ class OpenAIClient(BaseOpenAIClient):
         completion = []
 
         async for chunk in stream:
-            if delta_content := chunk.choices[0].delta:
+            if delta_content := chunk.choices[0].delta.content:
                 print(delta_content, end="")
                 completion.append(delta_content)
 
         print()
 
-        return Message(role=Role.ASSISTANT, content="".join(completion))
+        return Message(role=Role.ASSISTANT, content=("".join(completion)))
