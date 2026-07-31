@@ -28,7 +28,7 @@ async def start(stream: bool, client: AIClient) -> None:
     while True:
         user_input = input("➡️ ").strip()
 
-        if user_input.lower() == "exixt":
+        if user_input.lower() == "exit":
             print("Exiting the Chat. Bye!")
             break
 
