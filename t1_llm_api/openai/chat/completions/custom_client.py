@@ -1,7 +1,9 @@
 import json
+
 import aiohttp
 import requests
 
+from commons.constants import OPENAI_API_KEY, OPENAI_CHAT_COMPLETIONS_ENDPOINT
 from commons.models.message import Message
 from commons.models.role import Role
 from t1_llm_api.openai.base import BaseOpenAIClient
@@ -35,15 +37,38 @@ class CustomOpenAIClient(BaseOpenAIClient):
             The system prompt is automatically prepended to the messages.
             The response is printed to stdout before being returned.
         """
-        #TODO:
         # https://developers.openai.com/api/reference/resources/chat/subresources/completions/methods/create
-        # - Prepare headers with authorization and content type
-        # - Prepare message history with System prompt
-        # - Execute post request to AI API (use `requests`)
         # - Parse response
         # - Print response to console
         # - Return ASSISTANT message
-        raise NotImplementedError
+        headers = {
+            "Content-Type": "application/json",
+            "Authorization": self._api_key,
+        }
+
+        messages_dicts = [
+            {"role": Role.SYSTEM, "content": self._system_prompt},
+            *[msg.to_dict() for msg in messages],
+        ]
+
+        request_data = {"model": self._model_name, "messages": messages_dicts}
+
+        response = requests.post(
+            url=self._endpoint,
+            headers=headers,
+            json=request_data,
+            timeout=11,
+        )
+
+        if response.status_code == 200:
+            data = response.json()
+            if choices := data.get("choices", []):
+                content = choices[0].get("message", {}).get("content")
+                print("content: ", content)
+                return Message(role=Role.ASSISTANT, content=content)
+            raise ValueError("No 'choice' has been present in the response.")
+        else:
+            raise Exception(f"HTTP {response.status_code}: {response.text}")
 
     async def stream_response(self, messages: list[Message], **kwargs) -> Message:
         """
@@ -64,13 +89,56 @@ class CustomOpenAIClient(BaseOpenAIClient):
             Each token is printed to stdout as it arrives.
             Uses Server-Sent Events (SSE) format where each line starts with "data: ".
         """
-        #TODO:
-        # https://developers.openai.com/api/reference/resources/chat/subresources/completions/methods/create (Streaming tab)
-        # - Prepare headers with authorization and content type
-        # - Prepare message history with System prompt
-        # - Execute post request to AI API (use `aihttp`)
-        # - Handle stream with chunks
-        # - Parse response
-        # - Print chunks to console
-        # - Return ASSISTANT message
-        raise NotImplementedError
+        messages_dicts = [
+            {"role": Role.ASSISTANT, "content": self._system_prompt},
+            *[msg.to_dict() for msg in messages],
+        ]
+
+        headers = {"Authorization": self._api_key, "Content-Type": "application/json"}
+
+        request_data = {
+            "model": self._model_name,
+            "messages": messages_dicts,
+            "stream": True,
+        }
+
+        delta_contents = []
+
+        async with (
+            aiohttp.ClientSession() as session,
+            session.post(
+                url=self._endpoint, headers=headers, json=request_data
+            ) as response,
+        ):
+            if response.status == 200:
+                async for line in response.content:
+                    line_str = line.decode("utf-8").strip()
+                    if line_str.startswith("data: "):
+                        data = line_str[6:].strip()
+                        if data != "[DONE]":
+                            content_snippet = self._get_content_snippet(data)
+                            print(content_snippet, end="")
+                            delta_contents.append(content_snippet)
+                        else:
+                            print()
+            else:
+                error_text = await response.text()
+                print(f"{response.status} {error_text}")
+            return Message(role=Role.ASSISTANT, content="".join(delta_contents))
+
+    def _get_content_snippet(self, data: str) -> str:
+        """
+        Extract content from a streaming data chunk.
+        Parses the JSON data from an SSE chunk and extracts the content delta.
+
+        Args:
+            data (str): The JSON string from the SSE data field.
+
+        Returns:
+            str: The content text from the chunk, or empty string if no content.
+        """
+        data = json.loads(data)
+        if choices := data.get("choices"):
+            delta = choices[0].get("delta", {})
+            return delta.get("content", "")
+        return ""
