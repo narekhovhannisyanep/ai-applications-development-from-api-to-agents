@@ -1,7 +1,6 @@
-from openai import OpenAI, AsyncOpenAI
-
 from commons.models.message import Message
 from commons.models.role import Role
+from openai import AsyncOpenAI, OpenAI
 from t1_llm_api.openai.base import BaseOpenAIClient
 
 
@@ -19,7 +18,9 @@ class OpenAIResponsesClient(BaseOpenAIClient):
         Inherits all other attributes from BaseOpenAIClient.
     """
 
-    def __init__(self, endpoint: str, model_name: str, system_prompt: str, api_key: str):
+    def __init__(
+        self, endpoint: str, model_name: str, system_prompt: str, api_key: str
+    ):
         """
         Initialize the OpenAI Responses client with SDK.
 
@@ -29,11 +30,15 @@ class OpenAIResponsesClient(BaseOpenAIClient):
             system_prompt (str): The instruction to guide the model's behavior.
             api_key (str): The OpenAI API key for authentication.
         """
-        #TODO:
-        # Call to __init__ of super class
-        # Add OpenAI and AsyncOpenAI clients https://github.com/openai/openai-python?tab=readme-ov-file#usage
-        # (In readme you can find samples with both of these clients)
-        raise NotImplementedError
+        super().__init__(
+            endpoint=endpoint,
+            model_name=model_name,
+            system_prompt=system_prompt,
+            api_key=api_key,
+        )
+
+        self._client = OpenAI(api_key=api_key)
+        self._async_client = AsyncOpenAI(api_key=api_key)
 
     def response(self, messages: list[Message], **kwargs) -> Message:
         """
@@ -50,12 +55,15 @@ class OpenAIResponsesClient(BaseOpenAIClient):
             Uses the Responses API format with 'instructions' and 'input' parameters.
             The response is printed to stdout before being returned.
         """
-        #TODO:
-        # - Prepare input messages
-        # - Call client
-        # - Print response to console
-        # - Return ASSISTANT message
-        raise NotImplementedError
+        input_messages = [msg.to_dict() for msg in messages]
+        response = self._client.responses.create(
+            model=self._model_name,
+            instructions=self._system_prompt,
+            input=input_messages,
+        )
+
+        print(response.output_text)
+        return Message(role=Role.ASSISTANT, content=response.output_text)
 
     async def stream_response(self, messages: list[Message], **kwargs) -> Message:
         """
@@ -75,10 +83,19 @@ class OpenAIResponsesClient(BaseOpenAIClient):
             Uses the Responses API streaming format with event types.
             Listens for 'response.output_text.delta' events to build the response.
         """
-        #TODO:
-        # - Prepare input messages
-        # - Call client with streaming mode
-        # - Handle stream with events
-        # - Print response to console
-        # - Return ASSISTANT message
-        raise NotImplementedError
+        input_messages = [msg.to_dict() for msg in messages]
+
+        contents = []
+
+        async with self._async_client.responses.stream(
+            model=self._model_name,
+            instructions=self._system_prompt,
+            input=input_messages,
+        ) as stream:
+            async for event in stream:
+                if event.type == "response.output_text.delta":
+                    contents.append(event.delta)
+                    print(event.delta, end="")
+
+        print()
+        return Message(role=Role.ASSISTANT, content="".join(contents))
