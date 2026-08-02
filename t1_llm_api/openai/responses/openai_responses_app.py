@@ -22,4 +22,4 @@ openai_custom_client = CustomOpenAIResponsesClient(
     system_prompt=DEFAULT_SYSTEM_PROMPT,
 )
 
-asyncio.run(start(True, openai_client))
+asyncio.run(start(True, openai_custom_client))

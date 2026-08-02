@@ -3,7 +3,6 @@ import json
 import aiohttp
 import requests
 
-from commons.constants import OPENAI_API_KEY, OPENAI_CHAT_COMPLETIONS_ENDPOINT
 from commons.models.message import Message
 from commons.models.role import Role
 from t1_llm_api.openai.base import BaseOpenAIClient
