@@ -116,7 +116,7 @@ class CustomOpenAIResponsesClient(BaseOpenAIClient):
                     ):
                         data = json.loads(line_str[6:])
                         if delta := data.get("delta", ""):
-                            print(delta)
+                            print(delta, end="")
                             contents.append(delta)
                     elif line_str == "":
                         event_type = None
