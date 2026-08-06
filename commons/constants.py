@@ -22,14 +22,17 @@ OPENAI_CHAT_COMPLETIONS_ENDPOINT = f"{OPENAI_HOST}/v1/chat/completions"
 OPENAI_RESPONSES_ENDPOINT = f"{OPENAI_HOST}/v1/responses"
 OPENAI_EMBEDDINGS_ENDPOINT = f"{OPENAI_HOST}/v1/embeddings"
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY", "")
+GPT_5_4_NANO = "gpt-5.4-nano"
 
 # Anthropic API configuration
 ANTHROPIC_ENDPOINT = "https://api.anthropic.com/v1/messages"
 ANTHROPIC_API_KEY = os.getenv("ANTHROPIC_API_KEY", "")
+CLAUDE_HAIKU_4_5 = "claude-haiku-4-5"
 
 # Google Gemini API configuration
 GEMINI_ENDPOINT = "https://generativelanguage.googleapis.com/v1beta/models"
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "")
+GEMINI_3_5_FLASH_LITE = "gemini-3.5-flash-lite"
 
 # User Service API configuration
 USER_SERVICE_ENDPOINT = "http://localhost:8041"
