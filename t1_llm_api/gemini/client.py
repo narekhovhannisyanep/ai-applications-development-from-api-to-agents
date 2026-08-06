@@ -65,7 +65,7 @@ class GeminiAIClient(AIClient):
 
         content = response.text
         print(content)
-        return Message(role="model", content=content)
+        return Message(role=Role.MODEL, content=content)
 
     async def stream_response(self, messages: list[Message], **kwargs) -> Message:
         """
@@ -101,7 +101,7 @@ class GeminiAIClient(AIClient):
 
         print()
 
-        return Message(role="model", content="".join(content))
+        return Message(role=Role.MODEL, content="".join(content))
 
     def _to_gemini_contents(self, messages: list[Message]):
         """

@@ -91,7 +91,7 @@ class CustomGeminiAIClient(AIClient):
         content = self._extract_content(response_data)
         print(content)
 
-        return Message(role="model", content=content)
+        return Message(role=Role.MODEL, content=content)
 
     async def stream_response(self, messages: list[Message], **kwargs) -> Message:
         """
@@ -176,4 +176,4 @@ class CustomGeminiAIClient(AIClient):
             ) from requests.exceptions.RequestException
 
         print()
-        return Message(role="model", content="".join(contents))
+        return Message(role=Role.MODEL, content="".join(contents))

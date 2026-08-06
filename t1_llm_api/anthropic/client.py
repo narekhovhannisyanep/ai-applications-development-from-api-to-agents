@@ -1,5 +1,5 @@
 from anthropic import Anthropic, AsyncAnthropic
-
+from anthropic.types import MessageParam, TextBlock
 from commons.models.message import Message
 from commons.models.role import Role
 from t1_llm_api.base_client import AIClient
@@ -18,7 +18,9 @@ class AnthropicAIClient(AIClient):
         Inherits all other attributes from AIClient.
     """
 
-    def __init__(self, endpoint: str, model_name: str, api_key: str, system_prompt: str):
+    def __init__(
+        self, endpoint: str, model_name: str, api_key: str, system_prompt: str
+    ):
         """
         Initialize the Anthropic client with SDK.
 
@@ -28,14 +30,14 @@ class AnthropicAIClient(AIClient):
             api_key (str): The Anthropic API key for authentication.
             system_prompt (str): The system instruction to guide Claude's behavior.
         """
-        #TODO:
-        # Call to __init__ of super class
-        # Add Anthropic and AsyncAnthropic clients https://github.com/anthropics/anthropic-sdk-python?tab=readme-ov-file#usage
-        # (In readme you can find samples with both of these clients)
-        # Useful links with request/response samples:
-        #   - https://docs.anthropic.com/en/api/overview
-        #   - https://docs.anthropic.com/en/api/messages
-        raise NotImplementedError
+        super().__init__(
+            endpoint=endpoint,
+            model_name=model_name,
+            api_key=api_key,
+            system_prompt=system_prompt,
+        )
+        self._client = Anthropic(api_key=self._api_key)
+        self._async_client = AsyncAnthropic(api_key=self._api_key)
 
     def response(self, messages: list[Message], **kwargs) -> Message:
         """
@@ -53,12 +55,28 @@ class AnthropicAIClient(AIClient):
             Response content blocks are concatenated into a single text response.
             The response is printed to stdout before being returned.
         """
-        #TODO:
-        # - Add System prompt
-        # - Call client
-        # - Print response to console
-        # - Return ASSISTANT message
-        raise NotImplementedError
+        input_messages: list[MessageParam] = [
+            MessageParam(
+                role="user" if msg.role == "user" else "assistant", content=msg.content
+            )
+            for msg in messages
+        ]
+
+        aiResponse = self._client.messages.create(
+            model=self._model_name,
+            system=self._system_prompt,
+            messages=input_messages,
+            max_tokens=kwargs.get("max_tokens", 1024),
+        )
+
+        text_blocks = [
+            block.text for block in aiResponse.content if isinstance(block, TextBlock)
+        ]
+
+        content = "".join(text_blocks)
+        print(content)
+
+        return Message(Role.ASSISTANT, content)
 
     async def stream_response(self, messages: list[Message], **kwargs) -> Message:
         """
@@ -78,10 +96,27 @@ class AnthropicAIClient(AIClient):
             Listens for 'content_block_delta' events with text deltas.
             Each delta is printed to stdout as it arrives for real-time display.
         """
-        #TODO:
-        # - Add System prompt
-        # - Call client with streaming mode
-        # - Handle stream with chunks
-        # - Print response to console
-        # - Return ASSISTANT message
-        raise NotImplementedError
+        contents = []
+        input_messages = [
+            MessageParam(
+                role="user" if msg.role == "user" else "assistant", content=msg.content
+            )
+            for msg in messages
+        ]
+
+        async for event in await self._async_client.messages.create(
+            model=self._model_name,
+            system=self._system_prompt,
+            messages=input_messages,
+            max_tokens=kwargs.get("max_tokens", 1024),
+            stream=True,
+        ):
+            if event.type == "content_block_delta":
+                delta = event.delta
+                if delta.type == "text_delta":
+                    contents.append(delta.text)
+                    print(delta.text, end="")
+
+        print()
+
+        return Message(Role.ASSISTANT, "".join(contents))
