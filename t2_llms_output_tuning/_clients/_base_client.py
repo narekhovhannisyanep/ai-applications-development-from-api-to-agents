@@ -6,8 +6,9 @@ from commons.models.message import Message
 
 
 class AIClient(ABC):
-
-    def __init__(self, endpoint: str, model_name: str, api_key: str, api_key_header_name: str):
+    def __init__(
+        self, endpoint: str, model_name: str, api_key: str, api_key_header_name: str
+    ):
         if not api_key or api_key.strip() == "":
             raise ValueError("API key cannot be null or empty")
 
@@ -18,11 +19,11 @@ class AIClient(ABC):
 
     @abstractmethod
     def response(
-            self,
-            messages: list[Message],
-            print_request: bool,
-            print_only_content: bool,
-            **kwargs
+        self,
+        messages: list[Message],
+        print_request: bool,
+        print_only_content: bool,
+        **kwargs,
     ) -> Message:
         """
         Send synchronous request to AI API and return AI response.
@@ -45,6 +46,8 @@ class AIClient(ABC):
         safe_headers = headers.copy()
         if self._api_key_header_name in safe_headers:
             api_key = safe_headers[self._api_key_header_name]
-            safe_headers[self._api_key_header_name] = f"{api_key[:8]}...{api_key[-4:]}" if len(api_key) > 12 else "***"
+            safe_headers[self._api_key_header_name] = (
+                f"{api_key[:8]}...{api_key[-4:]}" if len(api_key) > 12 else "***"
+            )
 
         return safe_headers

@@ -31,7 +31,8 @@ CLAUDE_HAIKU_4_5 = "claude-haiku-4-5"
 ANTHROPIC_VERSION = "2023-06-01"
 
 # Google Gemini API configuration
-GEMINI_ENDPOINT = "https://generativelanguage.googleapis.com/v1beta/models"
+# GEMINI_ENDPOINT = "https://generativelanguage.googleapis.com/v1beta/models" # Old(generateContent) API
+GEMINI_ENDPOINT = "https://generativelanguage.googleapis.com/v1beta/interactions"
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "")
 GEMINI_3_5_FLASH_LITE = "gemini-3.5-flash-lite"
 
