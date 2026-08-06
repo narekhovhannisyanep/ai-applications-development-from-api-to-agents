@@ -36,11 +36,6 @@ class CustomOpenAIResponsesClient(BaseOpenAIClient):
             Uses the Responses API format with 'instructions' and 'input' parameters.
             The response is printed to stdout before being returned.
         """
-        # https://developers.openai.com/api/docs/guides/text?lang=curl
-        # - Execute post request to AI API (use `requests`)
-        # - Parse response
-        # - Print response to console
-        # - Return ASSISTANT message
         headers = {"Authorization": self._api_key, "Content-Type": "application/json"}
         input_messages = [msg.to_dict() for msg in messages]
         request_data = {
@@ -81,12 +76,6 @@ class CustomOpenAIResponsesClient(BaseOpenAIClient):
             Listens for 'response.output_text.delta' events to build the response.
             Each line with "event: " specifies the event type, followed by "data: " with the payload.
         """
-        # https://developers.openai.com/api/docs/guides/text?lang=curl
-        # - Execute post request to AI API (use `aiohttp`)
-        # - Handle stream with events
-        # - Parse response
-        # - Print chunks to console
-        # - Return ASSISTANT message
         headers = {"Authorization": self._api_key, "Content-Type": "application/json"}
         input_messages = [msg.to_dict() for msg in messages]
         request_data = {

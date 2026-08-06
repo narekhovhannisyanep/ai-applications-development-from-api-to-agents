@@ -63,7 +63,7 @@ class GeminiAIClient(AIClient):
             ),
         )
 
-        content = response.text
+        content = response.text or "AI response text is missing."
         print(content)
         return Message(role=Role.MODEL, content=content)
 

@@ -28,6 +28,7 @@ GPT_5_4_NANO = "gpt-5.4-nano"
 ANTHROPIC_ENDPOINT = "https://api.anthropic.com/v1/messages"
 ANTHROPIC_API_KEY = os.getenv("ANTHROPIC_API_KEY", "")
 CLAUDE_HAIKU_4_5 = "claude-haiku-4-5"
+ANTHROPIC_VERSION = "2023-06-01"
 
 # Google Gemini API configuration
 GEMINI_ENDPOINT = "https://generativelanguage.googleapis.com/v1beta/models"
