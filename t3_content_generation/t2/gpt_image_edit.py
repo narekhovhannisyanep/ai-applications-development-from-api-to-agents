@@ -1,6 +1,5 @@
 import base64
 import pathlib
-from datetime import datetime
 
 import requests
 
