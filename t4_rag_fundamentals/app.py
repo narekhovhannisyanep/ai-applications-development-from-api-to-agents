@@ -209,6 +209,10 @@ def main(rag: MicrowaveRAG):
 # - Create OpenAIEmbeddings with model='text-embedding-3-small' and api_key=OPENAI_API_KEY
 # - Create ChatOpenAI with temperature=0.0, model='gpt-5.2' and api_key=OPENAI_API_KEY
 # - Wrap both in a MicrowaveRAG instance and pass it to main()
-embeddings = OpenAIEmbeddings(model="text-embedding-3-small", api_key=OPENAI_API_KEY)
-openai_client = ChatOpenAI(model=GPT_5_4_NANO, api_key=OPENAI_API_KEY, temperature=0.0)
+embeddings = OpenAIEmbeddings(
+    model="text-embedding-3-small", api_key=SecretStr(OPENAI_API_KEY)
+)
+openai_client = ChatOpenAI(
+    model=GPT_5_4_NANO, api_key=SecretStr(OPENAI_API_KEY), temperature=0.0
+)
 main(MicrowaveRAG(embeddings=embeddings, llm_client=openai_client))
