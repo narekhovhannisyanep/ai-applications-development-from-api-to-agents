@@ -23,6 +23,7 @@ OPENAI_RESPONSES_ENDPOINT = f"{OPENAI_HOST}/v1/responses"
 OPENAI_EMBEDDINGS_ENDPOINT = f"{OPENAI_HOST}/v1/embeddings"
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY", "")
 GPT_5_4_NANO = "gpt-5.4-nano"
+OPENAI_EMBEDDING_MODEL = "text-embedding-3-small"
 
 # Anthropic API configuration
 ANTHROPIC_ENDPOINT = "https://api.anthropic.com/v1/messages"

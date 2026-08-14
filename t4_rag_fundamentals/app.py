@@ -11,15 +11,6 @@ from pydantic import SecretStr
 
 from commons.constants import GPT_5_4_NANO, OPENAI_API_KEY
 
-# TODO:
-# Create system prompt with:
-# - role: explains the role for LLM and what it should do
-# - Structure of User message, consists of 2 blocks:
-#   - `RAG CONTEXT`: information retrieved on the Retrieval step based on user request
-#   - `USER QUESTION`: The user's actual question
-# - Instructions:
-#   - Model must use only information from conversation
-#   - Strictly forbid to answer questions that are not in the conversation or not present in `RAG CONTEXT`
 _SYSTEM_PROMPT = """
 You are a RAG-powered assistant that assists users with their questions about microwave usage.
 
@@ -75,13 +66,6 @@ class MicrowaveRAG:
         Returns:
               VectorStore: Newly created and saved FAISS vectorstore.
         """
-        # TODO:
-        # - Load 'microwave_manual.txt' using TextLoader
-        # - Split documents into chunks using RecursiveCharacterTextSplitter
-        #   (chunk_size=300, chunk_overlap=50, separators=["\n\n", "\n", "."])
-        # - Create a FAISS vectorstore from chunks and self.embeddings using FAISS.from_documents()
-        # - Save the index locally using vectorstore.save_local("microwave_faiss_index")
-        # - Return the vectorstore
         current_dir = pathlib.Path(__file__).resolve().parent
         microwave_manual_path = current_dir / "microwave_manual.txt"
         microwave_faiss_index_path = current_dir / "microwave_faiss_index"
@@ -112,10 +96,6 @@ class MicrowaveRAG:
               k (int): The number of relevant documents(chunks) to retrieve.
               score (float): The similarity score between documents and query. Range 0.0 to 1.0.
         """
-        # TODO:
-        # - Search the vectorstore using similarity_search_with_relevance_scores() with k and score_threshold parameters
-        # - Iterate over results, collect each doc's page_content, and print its relevance score
-        # - Return all collected chunks joined with "\n\n" as a single context string
         print("=" * 100)
         print("🔍 STEP 1: RETRIEVAL")
         print(f"{'-' * 100}")
@@ -150,10 +130,6 @@ class MicrowaveRAG:
         Returns:
               str: Formatted prompt ready for the LLM.
         """
-        # TODO:
-        # - Format _USER_PROMPT template substituting {context} and {query}
-        # - Print the resulting augmented prompt
-        # - Return the formatted string
         print(f"\n🔗 STEP 2: AUGMENTATION\n{'-' * 100}")
         augmented_prompt = _USER_PROMPT.format(context=context, query=query)
         print(f"{augmented_prompt}\n{'=' * 100}")
@@ -167,11 +143,6 @@ class MicrowaveRAG:
         Returns:
               str: The LLM-generated answer.
         """
-        # TODO:
-        # - Build a messages list: [SystemMessage(content=_SYSTEM_PROMPT), HumanMessage(content=augmented_prompt)]
-        # - Invoke self.llm_client with the messages list
-        # - Print the response content
-        # - Return the response content string
         input_messages = [
             SystemMessage(content=_SYSTEM_PROMPT),
             HumanMessage(content=augmented_prompt),
@@ -184,13 +155,6 @@ class MicrowaveRAG:
 
 
 def main(rag: MicrowaveRAG):
-    # TODO:
-    # - Print a welcome message
-    # - Run an infinite loop that reads user input with input()
-    # - For each question execute the 3-step RAG pipeline:
-    #   - Step 1 (Retrieval):   call rag.retrieve_context() to fetch relevant chunks
-    #   - Step 2 (Augmentation): call rag.augment_prompt() to build the prompt
-    #   - Step 3 (Generation):  call rag.generate_answer() to get the LLM answer
     print("🎯 Microwave RAG Assistant")
 
     while True:
@@ -204,11 +168,6 @@ def main(rag: MicrowaveRAG):
         print(ai_message)
 
 
-# TODO:
-# Start the application by calling main() and passing a MicrowaveRAG instance:
-# - Create OpenAIEmbeddings with model='text-embedding-3-small' and api_key=OPENAI_API_KEY
-# - Create ChatOpenAI with temperature=0.0, model='gpt-5.2' and api_key=OPENAI_API_KEY
-# - Wrap both in a MicrowaveRAG instance and pass it to main()
 embeddings = OpenAIEmbeddings(
     model="text-embedding-3-small", api_key=SecretStr(OPENAI_API_KEY)
 )

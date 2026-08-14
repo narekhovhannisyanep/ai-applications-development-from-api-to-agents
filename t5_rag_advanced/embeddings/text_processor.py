@@ -1,6 +1,8 @@
+import json
 from enum import StrEnum
 
 import psycopg2
+import psycopg2.errorcodes
 from psycopg2.extras import RealDictCursor
 
 from t5_rag_advanced.embeddings.embeddings_client import EmbeddingsClient
@@ -22,38 +24,107 @@ class TextProcessor:
     def _get_connection(self):
         """Get database connection"""
         return psycopg2.connect(
-            host=self.db_config['host'],
-            port=self.db_config['port'],
-            database=self.db_config['database'],
-            user=self.db_config['user'],
-            password=self.db_config['password']
+            host=self.db_config["host"],
+            port=self.db_config["port"],
+            database=self.db_config["database"],
+            user=self.db_config["user"],
+            password=self.db_config["password"],
         )
 
-    #TODO:
-    # provide method `process_text_file` that will:
-    #   - apply file name, chunk size, overlap, dimensions and bool of the table should be truncated
-    #   - truncate table with vectors if needed
-    #   - load content from file and generate chunks (in `utils.text` present `chunk_text` that will help do that)
-    #   - generate embeddings from chunks
-    #   - save (insert) embeddings and chunks to DB
-    #       hint 1: embeddings should be saved as string list
-    #       hint 2: embeddings string list should be casted to vector ({embeddings}::vector)
+    def _truncate_table(self):
+        """Truncate the vectors table."""
+        connection = None
+        try:
+            connection = self._get_connection()
+            with connection.cursor() as cursor:
+                cursor.execute("TRUNCATE TABLE vectors;")
+                connection.commit()
+                print("Table 'vecttors' truncated successfully.")
+        except Exception as e:
+            print(f"Error tuncating table: {e}")
+        finally:
+            if connection is not None:
+                connection.close()
 
+    def _save_chunk(self, document_name: str, text: str, embedding: list[float]):
+        document_name_without_path = document_name.split("/")[-1]
+        try:
+            connection = self._get_connection()
+            with connection.cursor(cursor_factory=RealDictCursor) as cursor:
+                insert_query = """
+                INSERT INTO vectors (document_name, text, embedding)
+                VALUES (%s, %s, %s::vector)
+                RETURNING *;
+                """
+                embedding_data = (document_name_without_path, text, embedding)
+                cursor.execute(insert_query, embedding_data)
+                connection.commit()
 
-    #TODO:
-    # provide method `search` that will:
-    #   - apply search mode, user request, top k for search, min score threshold and dimensions
-    #   - generate embeddings from user request
-    #   - search in DB relevant context
-    #     hint 1: to search it in DB you need to create just regular select query
-    #     hint 2: Euclidean distance `<->`, Cosine distance `<=>`
-    #     hint 3: You need to extract `text` from `vectors` table
-    #     hint 4: You need to filter distance in WHERE clause
-    #     hint 5: To get top k use `limit`
+        except (psycopg2.OperationalError, psycopg2.DatabaseError) as e:
+            print(f"Database Error during save: {e}")
+        except Exception as e:
+            print(f"An unexpected error occured during save: {e}")
+        finally:
+            if connection is not None:
+                connection.close()
 
+    def process_text_file(
+        self,
+        file_name: str,
+        chunk_size: int,
+        overlap: int,
+        dimensions: int,
+        should_truncate: bool,
+    ):
+        """
+        Reads a file, splits the content into chunks, generates vectors, and saves to database.
+        """
+        if should_truncate:
+            self._truncate_table()
 
-# SELECT text, embedding <->  '[0.23, -0.45, 0.67, ..., 0.12]'::vector AS distance
-# FROM vectors
-# WHERE embedding <->  '[0.23, -0.45, 0.67, ..., 0.12]'::vector <= {score}
-# ORDER BY distance
-# LIMIT {top_k};
+        with open(file_name, "r", encoding="utf-8") as f:
+            chunks = chunk_text(f.read(), chunk_size, overlap)
+
+            embeddings = self.embeddings_client.get_embeddings(
+                chunks, dimensions, False
+            )
+
+            for text, embedding in zip(chunks, embeddings.values()):
+                self._save_chunk(file_name, text, embedding)
+
+    def search(
+        self,
+        search_mode: SearchMode,
+        user_request: str,
+        top_k: int,
+        max_distance: float,
+        dimensions: int,
+    ):
+        raw_embeddings = self.embeddings_client.get_embeddings(user_request, dimensions)
+        user_vector = next(iter(raw_embeddings.values()))
+        operator = "<->" if search_mode == SearchMode.EUCLIDIAN_DISTANCE else "<=>"
+        search_query = f"""
+        SELECT text, embedding {operator} %s::vector AS distance
+        FROM vectors
+        WHERE embedding {operator} %s::vector < %s
+        ORDER BY distance ASC
+        LIMIT %s;
+        """
+
+        try:
+            connection = self._get_connection()
+            with connection.cursor(cursor_factory=RealDictCursor) as cursor:
+                cursor.execute(
+                    search_query, (user_vector, user_vector, max_distance, top_k)
+                )
+                select_results = cursor.fetchall()
+                return select_results
+        except psycopg2.OperationalError as e:
+            print(f"DB Operation error: {e}")
+            raise e from e
+        except Exception as e:
+            print(f"An unexpected error occured: {e}")
+            raise e from e
+        finally:
+            if connection is not None:
+                connection.close()
