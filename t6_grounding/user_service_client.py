@@ -6,11 +6,12 @@ from commons.constants import USER_SERVICE_ENDPOINT
 
 
 class UserServiceClient:
-
     def get_all_users(self) -> list[dict[str, Any]]:
         headers = {"Content-Type": "application/json"}
 
-        response = requests.get(url=USER_SERVICE_ENDPOINT + "/v1/users", headers=headers)
+        response = requests.get(
+            url=USER_SERVICE_ENDPOINT + "/v1/users", headers=headers
+        )
 
         if response.status_code == 200:
             data = response.json()
@@ -22,7 +23,9 @@ class UserServiceClient:
     async def get_user(self, id: int) -> dict[str, Any]:
         headers = {"Content-Type": "application/json"}
 
-        response = requests.get(url=f"{USER_SERVICE_ENDPOINT}/v1/users/{id}", headers=headers)
+        response = requests.get(
+            url=f"{USER_SERVICE_ENDPOINT}/v1/users/{id}", headers=headers
+        )
 
         if response.status_code == 200:
             data = response.json()
@@ -31,11 +34,11 @@ class UserServiceClient:
         raise Exception(f"HTTP {response.status_code}: {response.text}")
 
     def search_users(
-            self,
-            name: Optional[str] = None,
-            surname: Optional[str] = None,
-            email: Optional[str] = None,
-            gender: Optional[str] = None,
+        self,
+        name: Optional[str] = None,
+        surname: Optional[str] = None,
+        email: Optional[str] = None,
+        gender: Optional[str] = None,
     ) -> list[dict[str, Any]]:
         headers = {"Content-Type": "application/json"}
 
@@ -50,7 +53,11 @@ class UserServiceClient:
         if gender:
             params["gender"] = gender
 
-        response = requests.get(url=USER_SERVICE_ENDPOINT + "/v1/users/search", headers=headers, params=params)
+        response = requests.get(
+            url=USER_SERVICE_ENDPOINT + "/v1/users/search",
+            headers=headers,
+            params=params,
+        )
 
         if response.status_code == 200:
             data = response.json()
