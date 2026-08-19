@@ -220,5 +220,6 @@ $RECYCLE.BIN/
 *.lnk
 module-6/deployment/docker-compose.yml
 
-# Local Index Store Directory
+# Local Store Directories
 microwave_faiss_index
+chroma_hobbies_store/
