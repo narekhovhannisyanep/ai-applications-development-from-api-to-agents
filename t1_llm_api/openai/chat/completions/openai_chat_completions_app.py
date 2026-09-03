@@ -2,7 +2,7 @@ import asyncio
 
 from commons.constants import (
     DEFAULT_SYSTEM_PROMPT,
-    GPT_5_4_NANO,
+    GPT_5_6_LUNA,
     OPENAI_API_KEY,
     OPENAI_CHAT_COMPLETIONS_ENDPOINT,
 )
@@ -12,13 +12,13 @@ from t1_llm_api.openai.chat.completions.custom_client import CustomOpenAIClient
 
 openai_client = OpenAIClient(
     endpoint=OPENAI_CHAT_COMPLETIONS_ENDPOINT,
-    model_name=GPT_5_4_NANO,
+    model_name=GPT_5_6_LUNA,
     api_key=OPENAI_API_KEY,
     system_prompt=DEFAULT_SYSTEM_PROMPT,
 )
 openai_custom_client = CustomOpenAIClient(
     endpoint=OPENAI_CHAT_COMPLETIONS_ENDPOINT,
-    model_name=GPT_5_4_NANO,
+    model_name=GPT_5_6_LUNA,
     api_key=OPENAI_API_KEY,
     system_prompt=DEFAULT_SYSTEM_PROMPT,
 )

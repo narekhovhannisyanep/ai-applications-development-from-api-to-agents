@@ -8,7 +8,7 @@ from openai import OpenAI, OpenAIError
 from openai.types.chat import ChatCompletionMessageParam
 from pydantic import BaseModel, Field
 
-from commons.constants import GPT_5_4_NANO, OPENAI_API_KEY
+from commons.constants import GPT_5_6_LUNA, OPENAI_API_KEY
 from t6_grounding.user_service_client import UserServiceClient
 
 MAX_CONTEXT_USERS = 20
@@ -75,7 +75,7 @@ class RagPipeline:
         self,
         llm_client: OpenAI,
         user_client: UserServiceClient,
-        model: str = GPT_5_4_NANO,
+        model: str = GPT_5_6_LUNA,
     ) -> None:
         self._llm = llm_client
         self._user_client = user_client

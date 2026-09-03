@@ -3,7 +3,7 @@ import asyncio
 from openai import AsyncOpenAI
 from openai.types.chat import ChatCompletion, ChatCompletionMessageParam
 
-from commons.constants import GPT_5_4_NANO, OPENAI_API_KEY
+from commons.constants import GPT_5_6_LUNA, OPENAI_API_KEY
 
 # TODO:
 # You will need to enhance system prompt to avoid PII leaks. Follow instructions below and create strong prompt.
@@ -74,7 +74,7 @@ async def main():
             break
 
         completion: ChatCompletion = await llm.chat.completions.create(
-            model=GPT_5_4_NANO,
+            model=GPT_5_6_LUNA,
             messages=messages_history,
             max_completion_tokens=1000,
         )

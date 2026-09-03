@@ -9,7 +9,7 @@ from langchain_openai import ChatOpenAI, OpenAIEmbeddings
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from pydantic import SecretStr
 
-from commons.constants import GPT_5_4_NANO, OPENAI_API_KEY
+from commons.constants import GPT_5_6_LUNA, OPENAI_API_KEY
 
 _SYSTEM_PROMPT = """
 You are a RAG-powered assistant that assists users with their questions about microwave usage.
@@ -172,6 +172,6 @@ embeddings = OpenAIEmbeddings(
     model="text-embedding-3-small", api_key=SecretStr(OPENAI_API_KEY)
 )
 openai_client = ChatOpenAI(
-    model=GPT_5_4_NANO, api_key=SecretStr(OPENAI_API_KEY), temperature=0.0
+    model=GPT_5_6_LUNA, api_key=SecretStr(OPENAI_API_KEY), temperature=0.0
 )
 main(MicrowaveRAG(embeddings=embeddings, llm_client=openai_client))

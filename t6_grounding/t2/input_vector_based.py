@@ -7,7 +7,7 @@ from langchain_openai import OpenAIEmbeddings
 from openai import OpenAI
 from openai.types.chat import ChatCompletionMessageParam
 
-from commons.constants import GPT_5_4_NANO, OPENAI_API_KEY
+from commons.constants import GPT_5_6_LUNA, OPENAI_API_KEY
 from t6_grounding.user_service_client import UserServiceClient
 
 SYSTEM_PROMPT = """ 
@@ -127,7 +127,7 @@ class UserRAG:
         ]
 
         llm_message = self._llm_client.chat.completions.create(
-            model=GPT_5_4_NANO, temperature=0.0, messages=input_messages
+            model=GPT_5_6_LUNA, temperature=0.0, messages=input_messages
         )
 
         return llm_message.choices[0].message.content or ""

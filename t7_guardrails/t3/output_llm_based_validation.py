@@ -4,7 +4,7 @@ from openai import AsyncOpenAI
 from openai.types.chat import ChatCompletionMessageParam
 from pydantic import BaseModel, Field
 
-from commons.constants import GPT_5_4_NANO, OPENAI_API_KEY
+from commons.constants import GPT_5_6_LUNA, OPENAI_API_KEY
 
 SYSTEM_PROMPT = "You are a secure colleague directory assistant designed to help users find contact information for business purposes."
 
@@ -97,7 +97,7 @@ class ValidationSchema(BaseModel):
 
 async def validate(ai_response: str):
     completion = await llm.chat.completions.parse(
-        model=GPT_5_4_NANO,
+        model=GPT_5_6_LUNA,
         messages=[
             {"role": "system", "content": VALIDATION_PROMPT},
             {"role": "user", "content": ai_response},
@@ -132,7 +132,7 @@ async def main(soft_response: bool):
             print(f"Response: \n{llm_message}")
         elif soft_response:
             filtered_completion = await llm.chat.completions.create(
-                model=GPT_5_4_NANO,
+                model=GPT_5_6_LUNA,
                 messages=[
                     {"role": "system", "content": FILTER_SYSTEM_PROMPT},
                     {"role": "user", "content": llm_message},

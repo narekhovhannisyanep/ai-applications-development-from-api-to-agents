@@ -5,7 +5,7 @@ from typing import Any
 from openai import AsyncOpenAI, OpenAIError
 from openai.types.chat import ChatCompletionMessageParam
 
-from commons.constants import GPT_5_4_NANO, OPENAI_API_KEY
+from commons.constants import GPT_5_6_LUNA, OPENAI_API_KEY
 from t6_grounding.user_service_client import UserServiceClient
 
 logging.basicConfig(
@@ -87,7 +87,7 @@ async def generate_response(system_prompt: str, user_message: str) -> str:
 
     try:
         llm_message = await llm_client.chat.completions.create(
-            model=GPT_5_4_NANO, temperature=0.0, messages=input_messages
+            model=GPT_5_6_LUNA, temperature=0.0, messages=input_messages
         )
         usage = getattr(llm_message, "usage", None)
         total_tokens = usage.total_tokens if usage else 0

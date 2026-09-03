@@ -23,10 +23,6 @@ class DeleteUserTool(BaseUserServiceTool):
         }
 
     def execute(self, arguments: dict[str, Any]) -> str:
-        # TODO:
-        # 1. Get int `id` from arguments
-        # 2. Call user_client delete_user and return its results
-        # 3. Optional: You can wrap it with `try-except` and return error as string `f"Error while deleting user by id: {str(e)}"`
         try:
             id = arguments["id"]
             return self._user_client.delete_user(int(id))

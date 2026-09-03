@@ -1,7 +1,7 @@
 import base64
 from pathlib import Path
 
-from commons.constants import GPT_5_4_NANO, OPENAI_HOST
+from commons.constants import GPT_5_6_LUNA, OPENAI_HOST
 from t3_content_generation._openai_client import OpenAIClientT3
 
 
@@ -39,7 +39,7 @@ OpenAIClientT3(f"{OPENAI_HOST}/v1/chat/completions").call(
     print_request=True,
     print_response=True,
     # model="gpt-realtime-2.1-mini",
-    model=GPT_5_4_NANO,
+    model=GPT_5_6_LUNA,
     messages=input_messages,
     max_completion_tokens=1024,
 )

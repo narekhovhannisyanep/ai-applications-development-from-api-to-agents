@@ -3,7 +3,7 @@ from datetime import datetime
 
 import requests
 
-from commons.constants import GPT_5_4_NANO, OPENAI_API_KEY, OPENAI_HOST
+from commons.constants import GPT_5_6_LUNA, OPENAI_API_KEY, OPENAI_HOST
 
 
 class Voice:

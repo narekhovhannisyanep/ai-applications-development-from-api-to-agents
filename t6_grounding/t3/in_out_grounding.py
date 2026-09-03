@@ -46,7 +46,7 @@ from openai.types.chat import ChatCompletionMessageParam, ParsedChatCompletionMe
 from pydantic import BaseModel, Field, computed_field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
-from commons.constants import GPT_5_4_NANO, OPENAI_API_KEY
+from commons.constants import GPT_5_6_LUNA, OPENAI_API_KEY
 from t6_grounding.user_service_client import UserServiceClient
 
 logger = logging.getLogger(__name__)
@@ -234,7 +234,7 @@ class RagPipeline:
             {"role": "user", "content": augmented_query},
         ]
         llm_hobbies_response = await self._llm.chat.completions.parse(
-            model=GPT_5_4_NANO, messages=messages, response_format=HobbiesSchema
+            model=GPT_5_6_LUNA, messages=messages, response_format=HobbiesSchema
         )
         message: ParsedChatCompletionMessage[HobbiesSchema] = (
             llm_hobbies_response.choices[0].message

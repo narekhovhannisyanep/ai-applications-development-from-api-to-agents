@@ -1,5 +1,5 @@
 from commons.constants import (
-    GPT_5_4_NANO,
+    GPT_5_6_LUNA,
     OPENAI_API_KEY,
     OPENAI_CHAT_COMPLETIONS_ENDPOINT,
     OPENAI_EMBEDDING_MODEL,
@@ -40,7 +40,7 @@ embeddings_client = EmbeddingsClient(
     OPENAI_EMBEDDINGS_ENDPOINT, OPENAI_EMBEDDING_MODEL, OPENAI_API_KEY
 )
 chat_completions_client = ChatCompletionClient(
-    OPENAI_CHAT_COMPLETIONS_ENDPOINT, GPT_5_4_NANO, OPENAI_API_KEY
+    OPENAI_CHAT_COMPLETIONS_ENDPOINT, GPT_5_6_LUNA, OPENAI_API_KEY
 )
 db_config = {
     "host": "localhost",

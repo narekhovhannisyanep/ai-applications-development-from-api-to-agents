@@ -8,7 +8,7 @@ from openai.types.chat import (
 )
 from pydantic import BaseModel, Field
 
-from commons.constants import GPT_5_4_NANO, OPENAI_API_KEY
+from commons.constants import GPT_5_6_LUNA, OPENAI_API_KEY
 
 SYSTEM_PROMPT = """You are a secure colleague directory assistant designed to 
 help users find contact information for business purposes."""
@@ -53,7 +53,7 @@ async def validate(user_input: str):
         {"role": "user", "content": user_input},
     ]
     completion: ParsedChatCompletion = await llm.chat.completions.parse(
-        model=GPT_5_4_NANO, messages=messages, response_format=ValidationSchema
+        model=GPT_5_6_LUNA, messages=messages, response_format=ValidationSchema
     )
     return completion.choices[0].message.parsed
 
