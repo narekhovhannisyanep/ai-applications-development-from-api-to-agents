@@ -1,4 +1,5 @@
-from typing import Any, Union, Optional
+from typing import Any
+
 from pydantic import BaseModel, Field
 
 
@@ -10,9 +11,9 @@ class ErrorResponse(BaseModel):
 
 class MCPResponse(BaseModel):
     jsonrpc: str = "2.0"
-    id: Union[str, int, None] = None
-    result: Optional[dict[str, Any]] = Field(default=None)
-    error: Optional[ErrorResponse] = Field(default=None)
+    id: str | int | None = None
+    result: dict[str, Any] | None = Field(default=None)
+    error: ErrorResponse | None = Field(default=None)
 
     class Config:
         extra = "allow"

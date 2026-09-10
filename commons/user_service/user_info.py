@@ -1,5 +1,3 @@
-from typing import Optional
-
 from pydantic import BaseModel
 
 
@@ -20,30 +18,31 @@ class UserCreate(BaseModel):
     name: str
     surname: str
     email: str
-    phone: Optional[str] = None
-    date_of_birth: Optional[str] = None
-    address: Optional[Address] = None
-    gender: Optional[str] = None
-    company: Optional[str] = None
-    salary: Optional[float] = None
+    phone: str | None = None
+    date_of_birth: str | None = None
+    address: Address | None = None
+    gender: str | None = None
+    company: str | None = None
+    salary: float | None = None
     about_me: str
-    credit_card: Optional[CreditCard] = None
+    credit_card: CreditCard | None = None
 
 
 class UserUpdate(BaseModel):
-    name: Optional[str] = None
-    surname: Optional[str] = None
-    email: Optional[str] = None
-    phone: Optional[str] = None
-    date_of_birth: Optional[str] = None
-    address: Optional[Address] = None
-    gender: Optional[str] = None
-    company: Optional[str] = None
-    salary: Optional[float] = None
-    credit_card: Optional[UserCreate] = None
+    name: str | None = None
+    surname: str | None = None
+    email: str | None = None
+    phone: str | None = None
+    date_of_birth: str | None = None
+    address: Address | None = None
+    gender: str | None = None
+    company: str | None = None
+    salary: float | None = None
+    credit_card: UserCreate | None = None
+
 
 class UserSearchRequest(BaseModel):
-    name: Optional[str] = None
-    email: Optional[str] = None
-    surname: Optional[str] = None
-    gender: Optional[str] = None
+    name: str | None = None
+    email: str | None = None
+    surname: str | None = None
+    gender: str | None = None

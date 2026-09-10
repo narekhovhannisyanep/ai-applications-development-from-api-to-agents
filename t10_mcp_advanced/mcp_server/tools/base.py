@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import Any, Dict
+from typing import Any
 
 
 class BaseTool(ABC):
@@ -19,11 +19,11 @@ class BaseTool(ABC):
 
     @property
     @abstractmethod
-    def input_schema(self) -> Dict[str, Any]:
+    def input_schema(self) -> dict[str, Any]:
         pass
 
     @abstractmethod
-    async def execute(self, arguments: Dict[str, Any]) -> str:
+    async def execute(self, arguments: dict[str, Any]) -> str:
         """Execute the tool with MCP-compliant arguments
 
         Args:
@@ -35,10 +35,10 @@ class BaseTool(ABC):
         """
         pass
 
-    def to_mcp_tool(self) -> Dict[str, Any]:
+    def to_mcp_tool(self) -> dict[str, Any]:
         """Provides tools JSON Schema"""
         return {
             "name": self.name,
             "description": self.description,
-            "inputSchema": self.input_schema
+            "inputSchema": self.input_schema,
         }
