@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   userservice:
     image: khshanovskyi/mockuserservice:latest
